@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: postgres-client
+  name: postgres-client
+spec:
+  template:
+    metadata:
+      labels:
+        app: postgres-client
+    spec:
+      restartPolicy: Never
+      initContainers:
+      - image: postgres
+        imagePullPolicy: IfNotPresent
+        name: pgbench-init
+        command: ["pgbench", "-i", "-h", "${POSTGRES_SERVER}", "-U", "admin", "perfdb"]
+        env:
+        - name: "PGPASSWORD"
+          value: "admin"
+      containers:
+      - image: postgres
+        imagePullPolicy: IfNotPresent
+        name: pgbench
+        command: ["pgbench", "-h", "${POSTGRES_SERVER}", "--time", "30", "-U", "admin", "perfdb"]
+#        resources:
+#          requests:
+#            cpu: "1.0"
+        env:
+        - name: "PGPASSWORD"
+          value: "admin"

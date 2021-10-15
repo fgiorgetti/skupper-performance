@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: http-client
+  name: http-client
+spec:
+  template:
+    metadata:
+      labels:
+        app: http-client
+    spec:
+      containers:
+      - image: quay.io/skupper/hey
+        imagePullPolicy: IfNotPresent
+        name: http
+        args: ["-z", "30s", "http://${HTTP_SERVER}:8080"]
+#        resources:
+#          requests:
+#            cpu: "1.0"
+      restartPolicy: "Never"

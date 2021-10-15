@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="results/iperf-data.js"></script>
+    <script type="text/javascript" src="results/postgres-data.js"></script>
+    <script type="text/javascript" src="results/http-data.js"></script>
+    <script type="text/javascript">
+      function dataCharts() {
+        var iperfChart = new google.charts.Bar(document.getElementById('iperfChart'));
+        iperfChart.draw(google.visualization.arrayToDataTable(iperfData), google.charts.Bar.convertOptions(iperfOptions));
+        var postgresChart = new google.charts.Bar(document.getElementById('postgresChart'));
+        postgresChart.draw(google.visualization.arrayToDataTable(postgresData), google.charts.Bar.convertOptions(postgresOptions));
+        var httpChart = new google.charts.Bar(document.getElementById('httpChart'));
+        httpChart.draw(google.visualization.arrayToDataTable(httpData), google.charts.Bar.convertOptions(httpOptions));
+
+      }
+      google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(dataCharts);
+    </script>
+  </head>
+  <body>
+      <div id="iperfChart" style="float: left; padding: 30px; width: 800px; height: 400px"></div>
+      <div id="postgresChart" style="float: left; padding: 30px; width: 800px; height: 400px"></div>
+      <div id="httpChart" style="float: left; padding: 30px; width: 800px; height: 400px"></div>
+  </body>
+</html>
+

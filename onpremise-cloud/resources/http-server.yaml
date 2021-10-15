@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: http-server
+  name: http-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: http-server
+  template:
+    metadata:
+      labels:
+        app: http-server
+    spec:
+      containers:
+      - image: nginxinc/nginx-unprivileged:stable-alpine
+        imagePullPolicy: IfNotPresent
+        name: http-server
+        ports:
+        - containerPort: 8080
+          name: web
+          protocol: TCP
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      terminationGracePeriodSeconds: 30

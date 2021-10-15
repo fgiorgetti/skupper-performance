@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: iperf-server
+  name: iperf-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iperf-server
+  template:
+    metadata:
+      labels:
+        app: iperf-server
+    spec:
+      containers:
+      - image: quay.io/skupper/iperf3
+        imagePullPolicy: IfNotPresent
+        name: iperf3
+        args: ["-s"]
+        ports:
+        - containerPort: 5201
+          name: port5201
+          protocol: TCP
+#        resources:
+#          requests:
+#            cpu: "1.0"
