@@ -51,7 +51,7 @@ current namespace is defined correctly:
 kubectl config get-contexts $(kubectl config current-context)
 ```
 
-If the namespace it not set correctly, you can update it using:
+If the namespace is not set correctly, you can update it using:
 
 ```
 kubectl config set-context --current --namespace=<desired_namespace>
