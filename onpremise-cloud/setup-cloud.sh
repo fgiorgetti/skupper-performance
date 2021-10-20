@@ -5,7 +5,7 @@
 skupper delete
 rm cloud.token.yaml
 
-skupper init --console-password admin
+skupper init --console-password admin --router-cpu '2.0'
 skupper token create --uses 100 cloud.token.yaml
 waitPodRunning skupper-service-controller
 

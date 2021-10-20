@@ -5,7 +5,7 @@
 [[ ! -f cloud.token.yaml ]] && echo "Run the skupper-cloud.sh first" && exit 1
 skupper delete
 
-skupper init --console-password admin --ingress=none
+skupper init --console-password admin --ingress=none --router-cpu '2.0'
 waitPodRunning skupper-service-controller
 skupper link create cloud.token.yaml
 

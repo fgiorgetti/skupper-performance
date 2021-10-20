@@ -39,8 +39,12 @@ writeResults() {
     skupper link status | grep -q 'is active' && from="op"
     
     # detecting destination (podip, lb, op, cl)
-    if [[ ${to} =~ \. ]]; then
+    if [[ ${to} =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
         dest=podip
+    elif [[ ${to} =~ \. ]]; then
+        dest=cl-route
+    elif [[ ${to} =~ -cloud-lb ]]; then
+        dest=cl-lb
     elif [[ ${to} =~ -server ]]; then
         dest=lb
     elif [[ ${to} =~ -onpremise ]]; then
@@ -72,21 +76,31 @@ writeResults() {
     op_podip=`average "results/${tool}-op-podip"`
     op_lb=`average "results/${tool}-op-lb"`
     op_op=`average "results/${tool}-op-op"`
+    op_cl_lb=0
+    [[ -f results/${tool}-op-cl-lb ]] && op_cl_lb=`average "results/${tool}-op-cl-lb"`
+    op_cl_route=0
+    [[ ${tool} = "http" ]] && op_cl_route=`average "results/${tool}-op-cl-route"`
     op_cl=`average "results/${tool}-op-cl"`
 
     cl_podip=`average "results/${tool}-cl-podip"`
     cl_lb=`average "results/${tool}-cl-lb"`
     cl_op=`average "results/${tool}-cl-op"`
+    cl_cl_route=0
+    [[ ${tool} = "http" ]] && cl_cl_route=`average "results/${tool}-cl-cl-route"`
     cl_cl=`average "results/${tool}-cl-cl"`
     echo Refreshing data file $dataFile
     cat << EOF > $dataFile
 ${tool}Data = [
-  ['${tool^^} throughput (${tpunit})', 'pod ip', 'load balancer', 'on-premise (skupper)', 'cloud (skupper)'],
-  ['on-premise', ${op_podip}, ${op_lb}, ${op_op}, ${op_cl}],
-  ['cloud', ${cl_podip}, ${cl_lb}, ${cl_op}, ${cl_cl}],
+  ['${tool^^} throughput (${tpunit})', 'pod ip', 'load balancer', 'on-premise (skupper)', 'cloud (load balancer)', 'cloud (route)', 'cloud (skupper)'],
+  ['on-premise', ${op_podip}, ${op_lb}, ${op_op}, ${op_cl_lb}, ${op_cl_route}, ${op_cl}],
+  ['cloud', ${cl_podip}, ${cl_lb}, ${cl_op}, ${cl_lb}, ${cl_cl_route}, ${cl_cl}],
 ]
 
 ${tool}Options = {
+  title: 'Skupper - ${tool^^} performance numbers (${tpunit}) - ${protocol^^}',
+  bar: {
+    groupWidth: '100%'
+  },
   chart: {
     title: 'Skupper - ${tool^^} performance numbers',
     subtitle: 'On-premise / Cloud (${protocol^^} adaptor)',

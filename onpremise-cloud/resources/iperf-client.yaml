@@ -14,8 +14,8 @@ spec:
       - image: quay.io/skupper/iperf3
         imagePullPolicy: IfNotPresent
         name: iperf3
-        #args: ["-c", "${IPERF_SERVER}", "-n", "1G"]
-        args: ["-c", "${IPERF_SERVER}", "-t", "30", '-f', 'g']
+        #args: ["-c", "${IPERF_SERVER}", "-t", "30", '-f', 'g']
+        args: ["-c", "${IPERF_SERVER}", "-t", "30", "-P", "10", "-f", "g"]
         ports:
         - containerPort: 5201
           name: port5201

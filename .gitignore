@@ -1,3 +1,4 @@
 cloud.token.yaml
 **/results
 *.hostname
+*.route

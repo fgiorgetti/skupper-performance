@@ -14,7 +14,8 @@ spec:
       - image: quay.io/skupper/hey
         imagePullPolicy: IfNotPresent
         name: http
-        args: ["-z", "30s", "http://${HTTP_SERVER}:8080"]
+        #args: ["-z", "30s", "http://${HTTP_SERVER}:${HTTP_PORT}"]
+        args: ["-z", "30s", "-c", "10", "http://${HTTP_SERVER}:${HTTP_PORT}"]
 #        resources:
 #          requests:
 #            cpu: "1.0"

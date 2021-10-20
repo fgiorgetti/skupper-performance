@@ -38,8 +38,14 @@ runPostgresAll() {
     POSTGRES_SERVER=postgres-server runPostgres
     # op
     POSTGRES_SERVER=postgres-skupper-onpremise runPostgres
+    if ! isCloud && kubectl get svc postgres-server-cloud-lb; then
+        # if resolving, proceed
+        nslookup `kubectl get svc postgres-server-cloud-lb -o json | jq -r .spec.externalName`
+        # cl_lb
+        [[ $? -eq 0 ]] && POSTGRES_SERVER=postgres-server-cloud-lb runPostgres || echo -en "\n\nUnable to test against postgres-server-cloud-lb (not resolving)\n\n"
+    fi
     # cl
     POSTGRES_SERVER=postgres-skupper-cloud runPostgres
 }
 
-[[ $0 =~ run-postgres-tests.sh ]] && runPostgresAll
+[[ $0 =~ run-postgres-tests.sh ]] && ( [[ -z ${POSTGRES_SERVER} ]] && runPostgresAll || runPostgres )
