@@ -1,3 +1,5 @@
+#!/bin/bash
+
 . common.sh
 
 runHttp() {

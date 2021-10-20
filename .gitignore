@@ -1,2 +1,3 @@
 cloud.token.yaml
 **/results
+*.hostname

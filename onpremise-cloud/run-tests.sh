@@ -1,3 +1,5 @@
+#!/bin/bash
+
 . common.sh
 . run-iperf-tests.sh
 . run-postgres-tests.sh

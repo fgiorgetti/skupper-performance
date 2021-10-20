@@ -1,15 +1,15 @@
+#!/bin/bash
+
 . common.sh
 
 skupper delete
 rm cloud.token.yaml
 
-./run-servers.sh
-
 skupper init --console-password admin
+skupper token create --uses 100 cloud.token.yaml
 waitPodRunning skupper-service-controller
 
-
-skupper token create cloud.token.yaml
+./run-servers.sh
 
 skupper service create iperf-skupper-cloud 5201
 skupper service bind iperf-skupper-cloud deployment iperf-server

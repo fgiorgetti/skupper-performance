@@ -1,3 +1,5 @@
+#!/bin/bash
+
 waitPodRunning() {
     while ! kubectl get pod | grep -q "$1.*Running"; do echo Waiting $1 running; sleep 1; done
 }
@@ -17,9 +19,16 @@ average() {
 }
 
 runningFrom() {
-    skupper link status | grep -q 'is active' && echo "on-premise" || echo "cloud"
+    [[ `kubectl get -o name secret -l 'skupper.io/type=token-claim-record' | wc -l` -gt 0 ]] && echo cloud || echo on-premise
 }
 
+isCloud() {
+    [[ `runningFrom` = "cloud" ]] && true || false
+}
+
+isOpenShift() {
+    kubectl api-resources | grep -q route.openshift.io && true || false
+}
 writeResults() {
     tool=$1; shift
     to=$1; shift
