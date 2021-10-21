@@ -90,13 +90,46 @@ writeResults() {
     cl_cl=`average "results/${tool}-cl-cl"`
     echo Refreshing data file $dataFile
     cat << EOF > $dataFile
-${tool}Data = [
+${tool}DataOnPremise = [
+  ['${tool^^} throughput (${tpunit})', 'on-premise (skupper)', 'cloud (k8s lb)', 'cloud (route)', 'cloud (skupper)'],
+  ['From on-premise to', ${op_op}, ${op_cl_lb}, ${op_cl_route}, ${op_cl}],
+]
+${tool}DataCloud = [
+  ['${tool^^} throughput (${tpunit})', 'on-premise (skupper)', 'cloud (skupper)'],
+  ['From cloud to', ${cl_op}, ${cl_cl}],
+]
+iperfOptionsOnPremise = {
+  title: 'From On-Premise cluster',
+  bar: {
+    groupWidth: '100%'
+  },
+  legend: {
+    position: 'bottom',
+    textStyle: {
+        fontSize: 14,
+    }
+  }
+}
+iperfOptionsCloud = {
+  title: 'From Cloud cluster',
+  bar: {
+    groupWidth: '100%'
+  },
+  legend: {
+    position: 'bottom',
+    textStyle: {
+        fontSize: 14,
+    }
+  }
+}
+
+${tool}DataFull = [
   ['${tool^^} throughput (${tpunit})', 'pod ip', 'load balancer', 'on-premise (skupper)', 'cloud (load balancer)', 'cloud (route)', 'cloud (skupper)'],
   ['on-premise', ${op_podip}, ${op_lb}, ${op_op}, ${op_cl_lb}, ${op_cl_route}, ${op_cl}],
   ['cloud', ${cl_podip}, ${cl_lb}, ${cl_op}, ${cl_lb}, ${cl_cl_route}, ${cl_cl}],
 ]
 
-${tool}Options = {
+${tool}OptionsFull = {
   title: 'Skupper - ${tool^^} performance numbers (${tpunit}) - ${protocol^^}',
   bar: {
     groupWidth: '100%'

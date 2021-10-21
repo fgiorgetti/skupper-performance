@@ -19,16 +19,31 @@
             role: 'annotation'
         }
       }
-      function drawChart(elemId, data, opt) {
+      function drawChartOnPremise(elemId, data, opt) {
+        drawChart(elemId, data, opt, false);
+      }
+      function drawChartCloud(elemId, data, opt) {
+        drawChart(elemId, data, opt, true);
+      }
+      function drawChart(elemId, data, opt, cloud) {
         var chart = new google.visualization.ColumnChart(document.getElementById(elemId));
         var view = new google.visualization.DataView(google.visualization.arrayToDataTable(data));
-        view.setColumns([0, 1, getColView(1), 2, getColView(2), 3, getColView(3), 4, getColView(4), 5, getColView(5), 6, getColView(6)])
+        if (cloud) {
+          view.setColumns([0, 1, getColView(1), 2, getColView(2)]);
+        } else {
+          view.setColumns([0, 1, getColView(1), 2, getColView(2), 3, getColView(3), 4, getColView(4)]);
+        }
+        // reserved for full chart only
+        // view.setColumns([0, 1, getColView(1), 2, getColView(2), 3, getColView(3), 4, getColView(4), 5, getColView(5), 6, getColView(6)])
         chart.draw(view, google.charts.Bar.convertOptions(opt));
       }
       function dataCharts() {
-        drawChart('iperfChart', iperfData, iperfOptions);
-        drawChart('postgresChart', postgresData, postgresOptions);
-        drawChart('httpChart', httpData, httpOptions);
+        drawChartOnPremise('iperfChartOnPremise', iperfDataOnPremise, iperfOptionsOnPremise);
+        drawChartCloud('iperfChartCloud', iperfDataCloud, iperfOptionsCloud);
+        drawChartOnPremise('postgresChartOnPremise', postgresDataOnPremise, postgresOptionsOnPremise);
+        drawChartCloud('postgresChartCloud', postgresDataCloud, postgresOptionsCloud);
+        drawChartOnPremise('httpChartOnPremise', httpDataOnPremise, httpOptionsOnPremise);
+        drawChartCloud('httpChartCloud', httpDataCloud, httpOptionsCloud);
       }
       google.charts.load('current', {'packages':['corechart', 'bar']});
       google.charts.setOnLoadCallback(dataCharts);
@@ -42,9 +57,9 @@
     </script>
     <style>
       .chart {
-        height: 100%;
-        width: 100%;
-        padding: 30px;
+        float: left;
+        height: 80%;
+        width: 50%;
       }
     </style>
   </head>
@@ -58,13 +73,19 @@
     </nav>
     <div class="tab-content" id="nav-tabContent">
       <div class="tab-pane fade show active" id="iperf" role="tabpanel" aria-labelledby="iperf-tab">
-        <div id="iperfChart" class="chart"></div>
+        <div style="text-align: center"><h1>Skupper - Iperf throughput (gbps)</h1></div>
+        <div id="iperfChartOnPremise" class="chart"></div>
+        <div id="iperfChartCloud" class="chart"></div>
       </div>
       <div class="tab-pane fade" id="postgres" role="tabpanel" aria-labelledby="postgres-tab">
-        <div id="postgresChart" class="chart"></div>
+        <center><h1>Skupper - Postgres throughput (tps)</h1></center>
+        <div id="postgresChartOnPremise" class="chart"></div>
+        <div id="postgresChartCloud" class="chart"></div>
       </div>
       <div class="tab-pane fade" id="http" role="tabpanel" aria-labelledby="http-tab">
-        <div id="httpChart" class="chart"></div>
+        <center><h1>Skupper - HTTP throughput (requests/s)</h1></center>
+        <div id="httpChartOnPremise" class="chart"></div>
+        <div id="httpChartCloud" class="chart"></div>
       </div>
     </div>
   </body>
