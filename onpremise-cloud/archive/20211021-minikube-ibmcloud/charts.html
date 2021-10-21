@@ -1,0 +1,94 @@
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="results/iperf-data.js"></script>
+    <script type="text/javascript" src="results/postgres-data.js"></script>
+    <script type="text/javascript" src="results/http-data.js"></script>
+    <script type="text/javascript">
+      function getColView(col) {
+        return {
+            calc: 'stringify',
+            sourceColumn: col,
+            type: 'string',
+            role: 'annotation'
+        }
+      }
+      function drawChartOnPremise(elemId, data, opt, http) {
+        drawChart(elemId, data, opt, false, http);
+      }
+      function drawChartCloud(elemId, data, opt) {
+        drawChart(elemId, data, opt, true, http);
+      }
+      function drawChart(elemId, data, opt, cloud, http) {
+        var chart = new google.visualization.ColumnChart(document.getElementById(elemId));
+        var view = new google.visualization.DataView(google.visualization.arrayToDataTable(data));
+        if (cloud) {
+          view.setColumns([0, 3, getColView(3)]);
+        } else if (!http) {
+          view.setColumns([0, 4, getColView(4), 6, getColView(6)]);
+        } else {
+          view.setColumns([0, 4, getColView(4), 5, getColView(5), 6, getColView(6)]);
+        }
+        // reserved for full chart only
+        // view.setColumns([0, 1, getColView(1), 2, getColView(2), 3, getColView(3), 4, getColView(4), 5, getColView(5), 6, getColView(6)])
+        chart.draw(view, google.charts.Bar.convertOptions(opt));
+      }
+      function dataCharts() {
+        drawChartOnPremise('iperfChartOnPremise', iperfDataOnPremise, iperfOptionsOnPremise, false);
+        drawChartCloud('iperfChartCloud', iperfDataCloud, iperfOptionsCloud, false);
+        drawChartOnPremise('postgresChartOnPremise', postgresDataOnPremise, postgresOptionsOnPremise, false);
+        drawChartCloud('postgresChartCloud', postgresDataCloud, postgresOptionsCloud, false);
+        drawChartOnPremise('httpChartOnPremise', httpDataOnPremise, httpOptionsOnPremise, true);
+        drawChartCloud('httpChartCloud', httpDataCloud, httpOptionsCloud, true);
+      }
+      google.charts.load('current', {'packages':['corechart', 'bar']});
+      google.charts.setOnLoadCallback(dataCharts);
+
+      $(document).ready(function(){
+        $('.nav-tabs').on('shown.bs.tab', function(){
+          // needed to redraw so that width and height are properly set
+          dataCharts();
+        });
+      });
+    </script>
+    <style>
+      .chart {
+        float: left;
+        height: 80%;
+        width: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="iperf-tab" data-bs-toggle="tab" data-bs-target="#iperf" type="button" role="tab" aria-controls="iperf" aria-selected="true">iPerf</button>
+        <button class="nav-link" id="postgres-tab" data-bs-toggle="tab" data-bs-target="#postgres" type="button" role="tab" aria-controls="postgres" aria-selected="false">Postgres</button>
+        <button class="nav-link" id="http-tab" data-bs-toggle="tab" data-bs-target="#http" type="button" role="tab" aria-controls="http" aria-selected="false">HTTP</button>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="iperf" role="tabpanel" aria-labelledby="iperf-tab">
+        <div style="text-align: center"><h1>Skupper - Iperf throughput (gbps)</h1></div>
+        <div id="iperfChartOnPremise" class="chart"></div>
+        <div id="iperfChartCloud" class="chart"></div>
+      </div>
+      <div class="tab-pane fade" id="postgres" role="tabpanel" aria-labelledby="postgres-tab">
+        <center><h1>Skupper - Postgres throughput (tps)</h1></center>
+        <div id="postgresChartOnPremise" class="chart"></div>
+        <div id="postgresChartCloud" class="chart"></div>
+      </div>
+      <div class="tab-pane fade" id="http" role="tabpanel" aria-labelledby="http-tab">
+        <center><h1>Skupper - HTTP throughput (requests/s)</h1></center>
+        <div id="httpChartOnPremise" class="chart"></div>
+        <div id="httpChartCloud" class="chart"></div>
+      </div>
+    </div>
+  </body>
+</html>
