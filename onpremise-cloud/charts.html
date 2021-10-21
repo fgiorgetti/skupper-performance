@@ -29,11 +29,11 @@
         var chart = new google.visualization.ColumnChart(document.getElementById(elemId));
         var view = new google.visualization.DataView(google.visualization.arrayToDataTable(data));
         if (cloud) {
-          view.setColumns([0, 1, getColView(1)]);
+          view.setColumns([0, 3, getColView(3)]);
         } else if (!http) {
-          view.setColumns([0, 1, getColView(1), 3, getColView(3)]);
+          view.setColumns([0, 4, getColView(4), 6, getColView(6)]);
         } else {
-          view.setColumns([0, 1, getColView(1), 2, getColView(2), 3, getColView(3)]);
+          view.setColumns([0, 4, getColView(4), 5, getColView(5), 6, getColView(6)]);
         }
         // reserved for full chart only
         // view.setColumns([0, 1, getColView(1), 2, getColView(2), 3, getColView(3), 4, getColView(4), 5, getColView(5), 6, getColView(6)])

@@ -40,7 +40,7 @@ runIperfServer() {
     kubectl apply  -f resources/iperf-server.yaml
     waitPodRunning iperf-server
     exposeSvc iperf-server
-    getExternalIP iperf-server
+    isCloud && getExternalIP iperf-server
 }
 
 runPostgresServer() {
@@ -57,7 +57,7 @@ runPostgresServer() {
     kubectl apply  -f resources/postgres-server.yaml
     waitPodRunning postgres-server
     exposeSvc postgres-server
-    getExternalIP postgres-server
+    isCloud && getExternalIP postgres-server
 }
 
 runHttpServer() {
@@ -75,9 +75,9 @@ runHttpServer() {
     waitPodRunning http-server
     exposeSvc http-server
     isOpenShift && isCloud && ( oc delete route http-server; oc expose service http-server)
-    rm -f http-server-cloud.route
+    isCloud && rm -f http-server-cloud.route
     isOpenShift && isCloud && kubectl get route http-server -o json | jq -r '.spec.host' > http-server-cloud.route
-    getExternalIP http-server
+    isCloud && getExternalIP http-server
 }
 
 ${IPERF:-true} && runIperfServer
