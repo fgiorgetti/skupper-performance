@@ -19,31 +19,33 @@
             role: 'annotation'
         }
       }
-      function drawChartOnPremise(elemId, data, opt) {
-        drawChart(elemId, data, opt, false);
+      function drawChartOnPremise(elemId, data, opt, http) {
+        drawChart(elemId, data, opt, false, http);
       }
       function drawChartCloud(elemId, data, opt) {
-        drawChart(elemId, data, opt, true);
+        drawChart(elemId, data, opt, true, http);
       }
-      function drawChart(elemId, data, opt, cloud) {
+      function drawChart(elemId, data, opt, cloud, http) {
         var chart = new google.visualization.ColumnChart(document.getElementById(elemId));
         var view = new google.visualization.DataView(google.visualization.arrayToDataTable(data));
         if (cloud) {
-          view.setColumns([0, 1, getColView(1), 2, getColView(2)]);
+          view.setColumns([0, 1, getColView(1)]);
+        } else if (!http) {
+          view.setColumns([0, 1, getColView(1), 3, getColView(3)]);
         } else {
-          view.setColumns([0, 1, getColView(1), 2, getColView(2), 3, getColView(3), 4, getColView(4)]);
+          view.setColumns([0, 1, getColView(1), 2, getColView(2), 3, getColView(3)]);
         }
         // reserved for full chart only
         // view.setColumns([0, 1, getColView(1), 2, getColView(2), 3, getColView(3), 4, getColView(4), 5, getColView(5), 6, getColView(6)])
         chart.draw(view, google.charts.Bar.convertOptions(opt));
       }
       function dataCharts() {
-        drawChartOnPremise('iperfChartOnPremise', iperfDataOnPremise, iperfOptionsOnPremise);
-        drawChartCloud('iperfChartCloud', iperfDataCloud, iperfOptionsCloud);
-        drawChartOnPremise('postgresChartOnPremise', postgresDataOnPremise, postgresOptionsOnPremise);
-        drawChartCloud('postgresChartCloud', postgresDataCloud, postgresOptionsCloud);
-        drawChartOnPremise('httpChartOnPremise', httpDataOnPremise, httpOptionsOnPremise);
-        drawChartCloud('httpChartCloud', httpDataCloud, httpOptionsCloud);
+        drawChartOnPremise('iperfChartOnPremise', iperfDataOnPremise, iperfOptionsOnPremise, false);
+        drawChartCloud('iperfChartCloud', iperfDataCloud, iperfOptionsCloud, false);
+        drawChartOnPremise('postgresChartOnPremise', postgresDataOnPremise, postgresOptionsOnPremise, false);
+        drawChartCloud('postgresChartCloud', postgresDataCloud, postgresOptionsCloud, false);
+        drawChartOnPremise('httpChartOnPremise', httpDataOnPremise, httpOptionsOnPremise, true);
+        drawChartCloud('httpChartCloud', httpDataCloud, httpOptionsCloud, true);
       }
       google.charts.load('current', {'packages':['corechart', 'bar']});
       google.charts.setOnLoadCallback(dataCharts);
