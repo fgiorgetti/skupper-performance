@@ -4,8 +4,8 @@
 
 getExternalIP() {
     service=$1
-    if isCloud; then
-        rm ${service}-cloud.hostname
+    rm ${service}-cloud.hostname
+    if isCloud && isOpenShift; then
         cloud_hostname=""
         attempt=0
         while [[ -z "${cloud_hostname}" ]]; do
