@@ -75,6 +75,7 @@ runHttpServer() {
     waitPodRunning http-server
     exposeSvc http-server
     isOpenShift && isCloud && ( oc delete route http-server; oc expose service http-server)
+    rm -f http-server-cloud.route
     isOpenShift && isCloud && kubectl get route http-server -o json | jq -r '.spec.host' > http-server-cloud.route
     getExternalIP http-server
 }
