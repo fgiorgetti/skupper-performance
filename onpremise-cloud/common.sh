@@ -98,7 +98,7 @@ ${tool}DataCloud = [
   ['${tool^^} throughput (${tpunit})', 'on-premise (skupper)', 'cloud (skupper)'],
   ['From cloud to', ${cl_op}, ${cl_cl}],
 ]
-iperfOptionsOnPremise = {
+${tool}OptionsOnPremise = {
   title: 'From On-Premise cluster',
   bar: {
     groupWidth: '100%'
@@ -110,7 +110,7 @@ iperfOptionsOnPremise = {
     }
   }
 }
-iperfOptionsCloud = {
+${tool}OptionsCloud = {
   title: 'From Cloud cluster',
   bar: {
     groupWidth: '100%'
