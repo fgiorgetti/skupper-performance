@@ -10,6 +10,9 @@ It runs basic performance tests using:
 * iPerf3
 * Postgres (pgbench)
 * HTTP (hey/nginx)
+* HTTP (wrk/nginx)
+* AMQP (quiver/qdrouterd)
+* Redis (redis-benchmark)
 
 After test completes, it generates charts to help evaluating the results.
 For more information, check the scenario documentation: [./onpremise-cloud/](./onpremise-cloud/README.md)

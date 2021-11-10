@@ -9,6 +9,9 @@ It runs basic performance tests using:
 * iPerf3
 * Postgres (pgbench)
 * HTTP (hey/nginx)
+* HTTP (wrk/nginx)
+* AMQP (quiver/qdrouterd)
+* Redis (redis-benchmark)
 
 After test completes, it generates charts to help evaluating the results.
 
@@ -30,6 +33,12 @@ After test completes, it generates charts to help evaluating the results.
 |  | * http-server (direct)               |  |                 |  | * http-server (direct)                |  |                                                                         
 |  | * http-skupper-onpremise (local)     |  |                 |  | * http-skupper-onpremise (remote)     |  |                                                                         
 |  | * http-skupper-cloud (remote)        |  |                 |  | * http-skupper-cloud (local)          |  |                                                                         
+|  | * amqp-server (direct)               |  |                 |  | * amqp-server (direct)                |  |                                                                         
+|  | * amqp-skupper-onpremise (local)     |  |                 |  | * amqp-skupper-onpremise (remote)     |  |                                                                         
+|  | * amqp-skupper-cloud (remote)        |  |                 |  | * amqp-skupper-cloud (local)          |  |                                                                         
+|  | * redis-server (direct)              |  |                 |  | * redis-server (direct)               |  |                                                                         
+|  | * redis-skupper-onpremise (local)    |  |                 |  | * redis-skupper-onpremise (remote)    |  |                                                                         
+|  | * redis-skupper-cloud (remote)       |  |      Link       |  | * redis-skupper-cloud (local)         |  |                                                                         
 |   --------------------------------------   |                 |   ---------------------------------------   |                                                                         
 |                                            |                 |                                             |                                                                         
  --------------------------------------------                   ---------------------------------------------                                                                          
@@ -87,10 +96,12 @@ If you are getting problems setting up this scenario, please report an issue.
 Once the scenario is prepared, you can run the tests.
 There are several scripts to run the tests:
 
-* run-tests.sh (run all the tests: iperf, postgres and http)
+* run-tests.sh (run all the tests: iperf, postgres, http, amqp and redis)
 * run-iperf-tests.sh
 * run-postgres-tests.sh
 * run-http-tests.sh
+* run-amqp-tests.sh
+* run-redis-tests.sh
 
 It is recommended to run the `./run-tests.sh` initially, as it will initialize the results.
 You can run any of the tests as many times as you want. Everytime you re-run a test, it will
