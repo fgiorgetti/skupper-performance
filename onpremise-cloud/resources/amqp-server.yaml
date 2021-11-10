@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: amqp-server
+  name: amqp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amqp-server
+  template:
+    metadata:
+      labels:
+        app: amqp-server
+    spec:
+      containers:
+      - image: quay.io/interconnectedcloud/qdrouterd:nightly
+        imagePullPolicy: IfNotPresent
+        name: amqp-server
+        ports:
+        - containerPort: 5672
+          name: amqp
+          protocol: TCP
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        env:
+        - name: QDROUTERD_CONF_TYPE
+          value: json
+        - name: QDROUTERD_CONF
+          value: |
+            [
+                [
+                    "router",
+                    {
+                        "id": "local-router",
+                        "mode": "interior"
+                    }
+                ],
+                [
+                    "listener",
+                    {
+                        "name": "amqp",
+                        "host": "0.0.0.0",
+                        "port": 5672
+                    }
+                ],
+                [
+                    "listener",
+                    {
+                        "name": "0.0.0.0@9090",
+                        "role": "normal",
+                        "host": "0.0.0.0",
+                        "port": 9090,
+                        "http": true,
+                        "httpRootDir": "disabled",
+                        "healthz": true,
+                        "metrics": true
+                    }
+                ]
+            ]

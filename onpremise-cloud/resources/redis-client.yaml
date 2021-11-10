@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: redis-client
+  name: redis-client
+spec:
+  template:
+    metadata:
+      labels:
+        app: redis-client
+    spec:
+      containers:
+      - image: redis
+        imagePullPolicy: IfNotPresent
+        name: redis-client
+        command: ["redis-benchmark"]
+        args: ["-q", "-n", "25000", "-h", "${REDIS_SERVER}"]
+#        resources:
+#          requests:
+#            cpu: "1.0"
+      restartPolicy: "Never"

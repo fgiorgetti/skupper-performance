@@ -20,8 +20,11 @@ runIperf() {
     waitJobCompleted iperf-client
     echo
     echo
-    kubectl logs job/iperf-client
-    tp=`kubectl logs job/iperf-client | egrep 'SUM.*(sender|receiver)$' | awk '{print $6}'`
+    tp=`kubectl logs job/iperf-client | egrep 'SUM.*(sender|receiver)$' | awk -F 'Gbits/sec' '{print $1}' | awk '{print $NF}'`
+    if [[ "${tp}" = "" ]]; then
+        tp=`kubectl logs job/iperf-client | egrep '(sender|receiver)$' | awk -F 'Gbits/sec' '{print $1}' | awk '{print $NF}'`
+    fi
+    tp=`echo "${tp}" | average`
     echo "iPerf3 Throughput to ${IPERF_SERVER}: ${tp} gbps"
     writeResults iperf "${IPERF_SERVER}" ${tp}
     
@@ -32,11 +35,11 @@ runIperf() {
 
 runIperfAll() {
     # pod ip
-    runIperf
+    #runIperf
     # lb
-    IPERF_SERVER=iperf-server runIperf
+    #! isCloud && IPERF_SERVER=iperf-server runIperf
     # op
-    IPERF_SERVER=iperf-skupper-onpremise runIperf
+    isCloud && IPERF_SERVER=iperf-skupper-onpremise runIperf
     if ! isCloud && kubectl get svc iperf-server-cloud-lb; then
         # if resolving, proceed
         nslookup `kubectl get svc iperf-server-cloud-lb -o json | jq -r .spec.externalName`
@@ -44,7 +47,7 @@ runIperfAll() {
         [[ $? -eq 0 ]] && IPERF_SERVER=iperf-server-cloud-lb runIperf || echo -en "\n\nUnable to test against iperf-server-cloud-lb (not resolving)\n\n"
     fi
     # cl
-    IPERF_SERVER=iperf-skupper-cloud runIperf
+    ! isCloud && IPERF_SERVER=iperf-skupper-cloud runIperf
 }
 
 [[ $0 =~ run-iperf-tests.sh ]] && ( [[ -z ${IPERF_SERVER} ]] && runIperfAll || runIperf )
