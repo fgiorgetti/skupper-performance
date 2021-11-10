@@ -23,8 +23,8 @@ spec:
       - image: postgres
         imagePullPolicy: IfNotPresent
         name: pgbench
-        #command: ["pgbench", "-h", "${POSTGRES_SERVER}", "--time", "30", "-U", "admin", "perfdb"]
-        command: ["pgbench", "-h", "${POSTGRES_SERVER}", "--time", "30", "--client", "10", "-U", "admin", "perfdb"]
+        command: ["pgbench", "-h", "${POSTGRES_SERVER}", "--time", "30", "-U", "admin", "perfdb"]
+        #command: ["pgbench", "-h", "${POSTGRES_SERVER}", "--time", "30", "--client", "10", "-U", "admin", "perfdb"]
 #        resources:
 #          requests:
 #            cpu: "1.0"

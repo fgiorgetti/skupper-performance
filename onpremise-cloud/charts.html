@@ -9,7 +9,10 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="results/iperf-data.js"></script>
     <script type="text/javascript" src="results/postgres-data.js"></script>
-    <script type="text/javascript" src="results/http-data.js"></script>
+    <script type="text/javascript" src="results/httpHey-data.js"></script>
+    <script type="text/javascript" src="results/httpWrk-data.js"></script>
+    <script type="text/javascript" src="results/amqp-data.js"></script>
+    <script type="text/javascript" src="results/redis-data.js"></script>
     <script type="text/javascript">
       function getColView(col) {
         return {
@@ -22,7 +25,7 @@
       function drawChartOnPremise(elemId, data, opt, http) {
         drawChart(elemId, data, opt, false, http);
       }
-      function drawChartCloud(elemId, data, opt) {
+      function drawChartCloud(elemId, data, opt, http) {
         drawChart(elemId, data, opt, true, http);
       }
       function drawChart(elemId, data, opt, cloud, http) {
@@ -40,12 +43,42 @@
         chart.draw(view, google.charts.Bar.convertOptions(opt));
       }
       function dataCharts() {
-        drawChartOnPremise('iperfChartOnPremise', iperfDataOnPremise, iperfOptionsOnPremise, false);
-        drawChartCloud('iperfChartCloud', iperfDataCloud, iperfOptionsCloud, false);
-        drawChartOnPremise('postgresChartOnPremise', postgresDataOnPremise, postgresOptionsOnPremise, false);
-        drawChartCloud('postgresChartCloud', postgresDataCloud, postgresOptionsCloud, false);
-        drawChartOnPremise('httpChartOnPremise', httpDataOnPremise, httpOptionsOnPremise, true);
-        drawChartCloud('httpChartCloud', httpDataCloud, httpOptionsCloud, true);
+        if (typeof iperfDataOnPremise !== 'undefined') {
+            drawChartOnPremise('iperfChartOnPremise', iperfDataOnPremise, iperfOptionsOnPremise, false);
+        }
+        if (typeof iperfDataCloud !== 'undefined') {
+            drawChartCloud('iperfChartCloud', iperfDataCloud, iperfOptionsCloud, false);
+        }
+        if (typeof postgresDataOnPremise !== 'undefined') {
+            drawChartOnPremise('postgresChartOnPremise', postgresDataOnPremise, postgresOptionsOnPremise, false);
+        }
+        if (typeof postgresDataCloud !== 'undefined') {
+            drawChartCloud('postgresChartCloud', postgresDataCloud, postgresOptionsCloud, false);
+        }
+        if (typeof amqpDataOnPremise !== 'undefined') {
+            drawChartOnPremise('amqpChartOnPremise', amqpDataOnPremise, amqpOptionsOnPremise, false);
+        }
+        if (typeof amqpDataCloud !== 'undefined') {
+            drawChartCloud('amqpChartCloud', amqpDataCloud, amqpOptionsCloud, false);
+        }
+        if (typeof redisDataOnPremise !== 'undefined') {
+            drawChartOnPremise('redisChartOnPremise', redisDataOnPremise, redisOptionsOnPremise, false);
+        }
+        if (typeof redisDataCloud !== 'undefined') {
+            drawChartCloud('redisChartCloud', redisDataCloud, redisOptionsCloud, false);
+        }
+        if (typeof httpHeyDataOnPremise !== 'undefined') {
+            drawChartOnPremise('httpHeyChartOnPremise', httpHeyDataOnPremise, httpHeyOptionsOnPremise, true);
+        }
+        if (typeof httpHeyDataCloud !== 'undefined') {
+            drawChartCloud('httpHeyChartCloud', httpHeyDataCloud, httpHeyOptionsCloud, true);
+        }
+        if (typeof httpWrkDataOnPremise !== 'undefined') {
+            drawChartOnPremise('httpWrkChartOnPremise', httpWrkDataOnPremise, httpWrkOptionsOnPremise, true);
+        }
+        if (typeof httpWrkDataCloud !== 'undefined') {
+            drawChartCloud('httpWrkChartCloud', httpWrkDataCloud, httpWrkOptionsCloud, true);
+        }
       }
       google.charts.load('current', {'packages':['corechart', 'bar']});
       google.charts.setOnLoadCallback(dataCharts);
@@ -70,24 +103,42 @@
       <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <button class="nav-link active" id="iperf-tab" data-bs-toggle="tab" data-bs-target="#iperf" type="button" role="tab" aria-controls="iperf" aria-selected="true">iPerf</button>
         <button class="nav-link" id="postgres-tab" data-bs-toggle="tab" data-bs-target="#postgres" type="button" role="tab" aria-controls="postgres" aria-selected="false">Postgres</button>
-        <button class="nav-link" id="http-tab" data-bs-toggle="tab" data-bs-target="#http" type="button" role="tab" aria-controls="http" aria-selected="false">HTTP</button>
+        <button class="nav-link" id="amqp-tab" data-bs-toggle="tab" data-bs-target="#amqp" type="button" role="tab" aria-controls="amqp" aria-selected="false">AMQP</button>
+        <button class="nav-link" id="redis-tab" data-bs-toggle="tab" data-bs-target="#redis" type="button" role="tab" aria-controls="redis" aria-selected="false">Redis</button>
+        <button class="nav-link" id="http-hey-tab" data-bs-toggle="tab" data-bs-target="#http-hey" type="button" role="tab" aria-controls="http-hey" aria-selected="false">HTTP (hey)</button>
+        <button class="nav-link" id="http-wrk-tab" data-bs-toggle="tab" data-bs-target="#http-wrk" type="button" role="tab" aria-controls="http-wrk" aria-selected="false">HTTP (wrk)</button>
       </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
       <div class="tab-pane fade show active" id="iperf" role="tabpanel" aria-labelledby="iperf-tab">
-        <div style="text-align: center"><h1>Skupper - Iperf throughput (gbps)</h1></div>
+        <div style="text-align: center"><h1>Skupper - Iperf throughput (gbits/s)</h1></div>
         <div id="iperfChartOnPremise" class="chart"></div>
         <div id="iperfChartCloud" class="chart"></div>
       </div>
       <div class="tab-pane fade" id="postgres" role="tabpanel" aria-labelledby="postgres-tab">
-        <center><h1>Skupper - Postgres throughput (tps)</h1></center>
+        <center><h1>Skupper - Postgres throughput (transactions/s)</h1></center>
         <div id="postgresChartOnPremise" class="chart"></div>
         <div id="postgresChartCloud" class="chart"></div>
       </div>
-      <div class="tab-pane fade" id="http" role="tabpanel" aria-labelledby="http-tab">
-        <center><h1>Skupper - HTTP throughput (requests/s)</h1></center>
-        <div id="httpChartOnPremise" class="chart"></div>
-        <div id="httpChartCloud" class="chart"></div>
+      <div class="tab-pane fade" id="amqp" role="tabpanel" aria-labelledby="amqp-tab">
+        <center><h1>Skupper - AMQP throughput (messages/s)</h1></center>
+        <div id="amqpChartOnPremise" class="chart"></div>
+        <div id="amqpChartCloud" class="chart"></div>
+      </div>
+      <div class="tab-pane fade" id="redis" role="tabpanel" aria-labelledby="redis-tab">
+        <center><h1>Skupper - Redis throughput (requests/s)</h1></center>
+        <div id="redisChartOnPremise" class="chart"></div>
+        <div id="redisChartCloud" class="chart"></div>
+      </div>
+      <div class="tab-pane fade" id="http-hey" role="tabpanel" aria-labelledby="http-hey-tab">
+        <center><h1>Skupper - HTTP Hey throughput (requests/s)</h1></center>
+        <div id="httpHeyChartOnPremise" class="chart"></div>
+        <div id="httpHeyChartCloud" class="chart"></div>
+      </div>
+      <div class="tab-pane fade" id="http-wrk" role="tabpanel" aria-labelledby="http-wrk-tab">
+        <center><h1>Skupper - HTTP Wrk throughput (requests/s)</h1></center>
+        <div id="httpWrkChartOnPremise" class="chart"></div>
+        <div id="httpWrkChartCloud" class="chart"></div>
       </div>
     </div>
   </body>

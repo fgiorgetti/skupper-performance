@@ -2,20 +2,19 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app: iperf-client
-  name: iperf-client
+    app: amqp-client
+  name: amqp-client
 spec:
   template:
     metadata:
       labels:
-        app: iperf-client
+        app: amqp-client
     spec:
       containers:
-      - image: quay.io/skupper/iperf3
+      - image: ssorj/quiver
         imagePullPolicy: IfNotPresent
-        name: iperf3
-        args: ["-c", "${IPERF_SERVER}", "-t", "30", '-f', 'g']
-        #args: ["-c", "${IPERF_SERVER}", "-t", "30", "-P", "10", "-f", "g"]
+        name: amqp
+        args: ["quiver", "-d", "30s", "amqp://${AMQP_SERVER}/q0"]
         ports:
         - containerPort: 5201
           name: port5201

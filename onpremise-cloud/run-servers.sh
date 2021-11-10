@@ -43,6 +43,22 @@ runIperfServer() {
     isCloud && getExternalIP iperf-server
 }
 
+runRedisServer() {
+    #
+    # Running redis server
+    #
+    echo
+    echo Running redis server
+    echo
+    kubectl delete svc redis-server --now
+    kubectl delete deploy/redis-server
+    waitNoPods redis-server
+    kubectl apply  -f resources/redis-server.yaml
+    waitPodRunning redis-server
+    exposeSvc redis-server
+    isCloud && getExternalIP redis-server
+}
+
 runPostgresServer() {
     #
     # Running postgres server
@@ -80,6 +96,25 @@ runHttpServer() {
     isCloud && getExternalIP http-server
 }
 
+runAmqpServer() {
+    #
+    # Running amqp server (qdrouterd)
+    #
+    echo
+    echo "Running amqp server"
+    echo
+    
+    kubectl delete svc amqp-server --now
+    kubectl delete -f resources/amqp-server.yaml
+    waitNoPods amqp-server
+    kubectl apply  -f resources/amqp-server.yaml
+    waitPodRunning amqp-server
+    exposeSvc amqp-server
+    isCloud && getExternalIP amqp-server
+}
+
 ${IPERF:-true} && runIperfServer
 ${POSTGRES:-true} && runPostgresServer
 ${HTTP:-true} && runHttpServer
+${AMQP:-true} && runAmqpServer
+${REDIS:-true} && runRedisServer

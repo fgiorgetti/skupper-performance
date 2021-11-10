@@ -15,7 +15,8 @@ waitJobCompleted() {
 
 average() {
     file=$1; shift
-    [[ ! -f ${file} ]] && echo 0 || cat $file | awk 'BEGIN{sum=0; c=0} {sum+=$1;c++} END{print sum/c}'
+    [[ -z "${file}" ]] && file="-"
+    [[ ! -f ${file} && ${file} != "-" ]] && echo 0 || cat $file | awk 'BEGIN{sum=0; c=0} {sum+=$1;c++} END{print sum/c}'
 }
 
 runningFrom() {
@@ -60,7 +61,11 @@ writeResults() {
         postgres)
             tpunit="tps"
         ;;
-        http)
+        http-hey)
+            tpunit="requests/s"
+            protocol="http"
+        ;;
+        http-wrk)
             tpunit="requests/s"
             protocol="http"
         ;;
@@ -86,7 +91,9 @@ writeResults() {
     cl_lb=`average "results/${tool}-cl-lb"`
     cl_op=`average "results/${tool}-cl-op"`
     cl_cl_route=0
-    [[ ${tool} = "http" ]] && cl_cl_route=`average "results/${tool}-cl-cl-route"`
+    [[ ${tool} =~ "http" ]] && cl_cl_route=`average "results/${tool}-cl-cl-route"`
+    colors="'blue', 'green'"
+    [[ ${tool} =~ "http" ]] && colors="'blue', 'red', 'green'"
     cl_cl=`average "results/${tool}-cl-cl"`
     echo Refreshing data file $dataFile
     cat << EOF > $dataFile
@@ -103,6 +110,10 @@ ${tool}OptionsOnPremise = {
   bar: {
     groupWidth: '100%'
   },
+  vAxis: {
+    minValue: 0
+  },
+  colors: [${colors}],
   legend: {
     position: 'bottom',
     textStyle: {
@@ -115,6 +126,10 @@ ${tool}OptionsCloud = {
   bar: {
     groupWidth: '100%'
   },
+  vAxis: {
+    minValue: 0
+  },
+  colors: ['green'],
   legend: {
     position: 'bottom',
     textStyle: {

@@ -16,5 +16,9 @@ skupper service create iperf-skupper-onpremise 5201
 skupper service bind iperf-skupper-onpremise deployment iperf-server
 skupper service create postgres-skupper-onpremise 5432
 skupper service bind postgres-skupper-onpremise deployment postgres-server
+skupper service create amqp-skupper-onpremise 5672
+skupper service bind amqp-skupper-onpremise deployment amqp-server
+skupper service create redis-skupper-onpremise 6379
+skupper service bind redis-skupper-onpremise deployment redis-server
 skupper service create http-skupper-onpremise 8080 --mapping http
 skupper service bind http-skupper-onpremise deployment http-server
