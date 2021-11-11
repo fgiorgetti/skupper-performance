@@ -84,7 +84,7 @@ writeResults() {
     op_cl_lb=0
     [[ -f results/${tool}-op-cl-lb ]] && op_cl_lb=`average "results/${tool}-op-cl-lb"`
     op_cl_route=0
-    [[ ${tool} = "http" ]] && op_cl_route=`average "results/${tool}-op-cl-route"`
+    [[ ${tool} =~ "http" ]] && op_cl_route=`average "results/${tool}-op-cl-route"`
     op_cl=`average "results/${tool}-op-cl"`
 
     cl_podip=`average "results/${tool}-cl-podip"`
@@ -105,13 +105,15 @@ ${tool}DataCloud = [
   ['${tool^^} throughput (${tpunit})', 'pod ip', 'load balancer', 'on-premise (skupper)', 'cloud (load balancer)', 'cloud (route)', 'cloud (skupper)'],
   ['From cloud to', ${cl_podip}, ${cl_lb}, ${cl_op}, ${cl_lb}, ${cl_cl_route}, ${cl_cl}],
 ]
+yMax = Math.max(...${tool}DataOnPremise[1].slice(1), ...${tool}DataCloud[1].slice(1))
 ${tool}OptionsOnPremise = {
   title: 'From On-Premise cluster',
   bar: {
     groupWidth: '100%'
   },
   vAxis: {
-    minValue: 0
+    minValue: 0,
+    maxValue: yMax,
   },
   colors: [${colors}],
   legend: {
@@ -127,7 +129,8 @@ ${tool}OptionsCloud = {
     groupWidth: '100%'
   },
   vAxis: {
-    minValue: 0
+    minValue: 0,
+    maxValue: yMax,
   },
   colors: ['green'],
   legend: {
