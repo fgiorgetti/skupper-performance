@@ -55,6 +55,8 @@ runRedisServer() {
     waitNoPods redis-server
     kubectl apply  -f resources/redis-server.yaml
     waitPodRunning redis-server
+    # prevent client communication error
+    kubectl exec deploy/redis-server -- redis-cli config set stop-writes-on-bgsave-error no
     exposeSvc redis-server
     isCloud && getExternalIP redis-server
 }

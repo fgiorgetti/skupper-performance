@@ -15,7 +15,7 @@ spec:
         app: amqp-server
     spec:
       containers:
-      - image: quay.io/interconnectedcloud/qdrouterd:nightly
+      - image: quay.io/interconnectedcloud/qdrouterd:1.18.0-rc1
         imagePullPolicy: IfNotPresent
         name: amqp-server
         ports:

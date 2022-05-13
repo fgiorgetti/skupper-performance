@@ -10,7 +10,7 @@ waitNoPods() {
 
 waitJobCompleted() {
     attempt=0
-    while ! kubectl get pod | grep -q "$1.*Completed"; do echo Waiting $1 completed; sleep 1; attempt=$((attempt+1)); [ $attempt -gt 60 ] && break; done
+    while ! kubectl get pod | grep -q "$1.*Completed"; do echo Waiting $1 completed; sleep 1; attempt=$((attempt+1)); [ $attempt -gt 180 ] && break; done
 }
 
 average() {
