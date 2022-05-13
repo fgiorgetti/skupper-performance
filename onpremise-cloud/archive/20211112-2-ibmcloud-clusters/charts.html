@@ -1,0 +1,145 @@
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="results/iperf-data.js"></script>
+    <script type="text/javascript" src="results/postgres-data.js"></script>
+    <script type="text/javascript" src="results/httpHey-data.js"></script>
+    <script type="text/javascript" src="results/httpWrk-data.js"></script>
+    <script type="text/javascript" src="results/amqp-data.js"></script>
+    <script type="text/javascript" src="results/redis-data.js"></script>
+    <script type="text/javascript">
+      function getColView(col) {
+        return {
+            calc: 'stringify',
+            sourceColumn: col,
+            type: 'string',
+            role: 'annotation'
+        }
+      }
+      function drawChartOnPremise(elemId, data, opt, http) {
+        drawChart(elemId, data, opt, false, http);
+      }
+      function drawChartCloud(elemId, data, opt, http) {
+        drawChart(elemId, data, opt, true, http);
+      }
+      function drawChart(elemId, data, opt, cloud, http) {
+        var chart = new google.visualization.ColumnChart(document.getElementById(elemId));
+        var view = new google.visualization.DataView(google.visualization.arrayToDataTable(data));
+        if (cloud) {
+          view.setColumns([0, 3, getColView(3)]);
+        } else if (!http) {
+          view.setColumns([0, 4, getColView(4), 6, getColView(6)]);
+        } else {
+          view.setColumns([0, 4, getColView(4), 5, getColView(5), 6, getColView(6)]);
+        }
+        // reserved for full chart only
+        // view.setColumns([0, 1, getColView(1), 2, getColView(2), 3, getColView(3), 4, getColView(4), 5, getColView(5), 6, getColView(6)])
+        chart.draw(view, google.charts.Bar.convertOptions(opt));
+      }
+      function dataCharts() {
+        if (typeof iperfDataOnPremise !== 'undefined') {
+            drawChartOnPremise('iperfChartOnPremise', iperfDataOnPremise, iperfOptionsOnPremise, false);
+        }
+        if (typeof iperfDataCloud !== 'undefined') {
+            drawChartCloud('iperfChartCloud', iperfDataCloud, iperfOptionsCloud, false);
+        }
+        if (typeof postgresDataOnPremise !== 'undefined') {
+            drawChartOnPremise('postgresChartOnPremise', postgresDataOnPremise, postgresOptionsOnPremise, false);
+        }
+        if (typeof postgresDataCloud !== 'undefined') {
+            drawChartCloud('postgresChartCloud', postgresDataCloud, postgresOptionsCloud, false);
+        }
+        if (typeof amqpDataOnPremise !== 'undefined') {
+            drawChartOnPremise('amqpChartOnPremise', amqpDataOnPremise, amqpOptionsOnPremise, false);
+        }
+        if (typeof amqpDataCloud !== 'undefined') {
+            drawChartCloud('amqpChartCloud', amqpDataCloud, amqpOptionsCloud, false);
+        }
+        if (typeof redisDataOnPremise !== 'undefined') {
+            drawChartOnPremise('redisChartOnPremise', redisDataOnPremise, redisOptionsOnPremise, false);
+        }
+        if (typeof redisDataCloud !== 'undefined') {
+            drawChartCloud('redisChartCloud', redisDataCloud, redisOptionsCloud, false);
+        }
+        if (typeof httpHeyDataOnPremise !== 'undefined') {
+            drawChartOnPremise('httpHeyChartOnPremise', httpHeyDataOnPremise, httpHeyOptionsOnPremise, true);
+        }
+        if (typeof httpHeyDataCloud !== 'undefined') {
+            drawChartCloud('httpHeyChartCloud', httpHeyDataCloud, httpHeyOptionsCloud, true);
+        }
+        if (typeof httpWrkDataOnPremise !== 'undefined') {
+            drawChartOnPremise('httpWrkChartOnPremise', httpWrkDataOnPremise, httpWrkOptionsOnPremise, true);
+        }
+        if (typeof httpWrkDataCloud !== 'undefined') {
+            drawChartCloud('httpWrkChartCloud', httpWrkDataCloud, httpWrkOptionsCloud, true);
+        }
+      }
+      google.charts.load('current', {'packages':['corechart', 'bar']});
+      google.charts.setOnLoadCallback(dataCharts);
+
+      $(document).ready(function(){
+        $('.nav-tabs').on('shown.bs.tab', function(){
+          // needed to redraw so that width and height are properly set
+          dataCharts();
+        });
+      });
+    </script>
+    <style>
+      .chart {
+        float: left;
+        height: 80%;
+        width: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="iperf-tab" data-bs-toggle="tab" data-bs-target="#iperf" type="button" role="tab" aria-controls="iperf" aria-selected="true">iPerf</button>
+        <button class="nav-link" id="postgres-tab" data-bs-toggle="tab" data-bs-target="#postgres" type="button" role="tab" aria-controls="postgres" aria-selected="false">Postgres</button>
+        <button class="nav-link" id="amqp-tab" data-bs-toggle="tab" data-bs-target="#amqp" type="button" role="tab" aria-controls="amqp" aria-selected="false">AMQP</button>
+        <button class="nav-link" id="redis-tab" data-bs-toggle="tab" data-bs-target="#redis" type="button" role="tab" aria-controls="redis" aria-selected="false">Redis</button>
+        <button class="nav-link" id="http-hey-tab" data-bs-toggle="tab" data-bs-target="#http-hey" type="button" role="tab" aria-controls="http-hey" aria-selected="false">HTTP (hey)</button>
+        <button class="nav-link" id="http-wrk-tab" data-bs-toggle="tab" data-bs-target="#http-wrk" type="button" role="tab" aria-controls="http-wrk" aria-selected="false">HTTP (wrk)</button>
+      </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="iperf" role="tabpanel" aria-labelledby="iperf-tab">
+        <div style="text-align: center"><h1>Skupper - Iperf throughput (gbits/s)</h1></div>
+        <div id="iperfChartOnPremise" class="chart"></div>
+        <div id="iperfChartCloud" class="chart"></div>
+      </div>
+      <div class="tab-pane fade" id="postgres" role="tabpanel" aria-labelledby="postgres-tab">
+        <center><h1>Skupper - Postgres throughput (transactions/s)</h1></center>
+        <div id="postgresChartOnPremise" class="chart"></div>
+        <div id="postgresChartCloud" class="chart"></div>
+      </div>
+      <div class="tab-pane fade" id="amqp" role="tabpanel" aria-labelledby="amqp-tab">
+        <center><h1>Skupper - AMQP throughput (messages/s)</h1></center>
+        <div id="amqpChartOnPremise" class="chart"></div>
+        <div id="amqpChartCloud" class="chart"></div>
+      </div>
+      <div class="tab-pane fade" id="redis" role="tabpanel" aria-labelledby="redis-tab">
+        <center><h1>Skupper - Redis throughput (requests/s)</h1></center>
+        <div id="redisChartOnPremise" class="chart"></div>
+        <div id="redisChartCloud" class="chart"></div>
+      </div>
+      <div class="tab-pane fade" id="http-hey" role="tabpanel" aria-labelledby="http-hey-tab">
+        <center><h1>Skupper - HTTP Hey throughput (requests/s)</h1></center>
+        <div id="httpHeyChartOnPremise" class="chart"></div>
+        <div id="httpHeyChartCloud" class="chart"></div>
+      </div>
+      <div class="tab-pane fade" id="http-wrk" role="tabpanel" aria-labelledby="http-wrk-tab">
+        <center><h1>Skupper - HTTP Wrk throughput (requests/s)</h1></center>
+        <div id="httpWrkChartOnPremise" class="chart"></div>
+        <div id="httpWrkChartCloud" class="chart"></div>
+      </div>
+    </div>
+  </body>
+</html>
